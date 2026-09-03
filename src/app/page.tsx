@@ -1,79 +1,66 @@
-import { getDecks, createDeck } from "./actions";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { Layers, Plus } from "lucide-react";
+import { getDecks, generateDeckFromPrompt, deleteDeck } from "./actions"
+import Form from 'next/form'
 
 export default async function HomePage() {
-  const decks = await getDecks();
+  const decks = await getDecks()
 
   return (
-    <main className="min-h-screen bg-slate-50/50 p-8 md:p-12 text-slate-900">
-      <div className="max-w-5xl mx-auto space-y-8">
+    <main className="min-h-screen bg-slate-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-4xl mx-auto space-y-10">
+        <div className="text-center space-y-2">
+          <h1 className="text-4xl font-extrabold tracking-tight text-slate-900">Flashcards AI</h1>
+          <p className="text-slate-600">Transform any topic into a smart study deck using AI.</p>
+        </div>
 
-        {/* Header Section */}
-        <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">Flashcard Decks</h1>
-            <p className="text-sm text-muted-foreground mt-1">
-              Manage your decks and review schedules.
-            </p>
-          </div>
-        </header>
+        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+          <Form action={generateDeckFromPrompt} className="flex flex-col sm:flex-row gap-3">
+            <input
+              name="title"
+              placeholder="What do you want to learn today?"
+              className="flex-1 px-4 py-3 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent text-slate-900 placeholder:text-slate-400"
+              required
+            />
+            <button
+              type="submit"
+              className="px-6 py-3 bg-slate-900 text-white font-medium rounded-xl hover:bg-slate-800 transition-colors shadow-sm cursor-pointer"
+            >
+              Generate Deck
+            </button>
+          </Form>
+        </div>
 
-        <Card className="rounded-2xl border-slate-200/80 shadow-sm bg-white">
-          <CardContent className="p-6">
-            <form action={createDeck} className="flex gap-3">
-              <Input
-                name="title"
-                placeholder="Enter deck title (e.g. Spanish Vocabulary)..."
-                required
-                className="rounded-xl bg-slate-50 border-slate-200 text-base py-5 focus-visible:ring-slate-400"
-              />
-              <Button type="submit" size="lg" className="rounded-xl px-6 gap-2 font-medium">
-                <Plus className="h-4 w-4" /> Create Deck
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
+        <div className="space-y-4">
+          <h2 className="text-xl font-bold text-slate-800">Your Decks</h2>
 
-        {decks.length === 0 ? (
-          <div className="text-center py-16 bg-white rounded-2xl border border-dashed border-slate-200 space-y-3">
-            <Layers className="h-10 w-10 text-slate-300 mx-auto" />
-            <p className="text-slate-500 text-sm">No decks created yet.</p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {decks.map((deck) => (
-              <Card
-                key={deck.id}
-                className="rounded-2xl border-slate-200/80 shadow-sm hover:shadow-md transition-shadow bg-white flex flex-col justify-between"
-              >
-                <CardHeader className="p-6 pb-4">
-                  <div className="flex items-start justify-between gap-2">
-                    <CardTitle className="text-xl font-semibold line-clamp-2">
-                      {deck.title}
-                    </CardTitle>
-                    <Badge variant="secondary" className="rounded-lg px-2.5 py-1 text-xs">
-                      {deck._count.cards} cards
-                    </Badge>
-                  </div>
-                </CardHeader>
-                <CardContent className="p-6 pt-0 flex gap-2">
-                  <Button variant="outline" className="w-full rounded-xl text-xs font-medium">
-                    Manage Cards
-                  </Button>
-                  <Button className="w-full rounded-xl text-xs font-medium">
-                    Study Now
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        )}
+          {decks.length === 0 ? (
+            <p className="text-slate-500 text-center py-8">No decks yet. Type a topic above to create your first one!</p>
+          ) : (
+            <div className="space-y-3 sm:grid-cols-2 md:grid-cols-3 gap-4">
+
+              {decks.map((deck) => (
+                <div
+                  key={deck.id}
+                  className="bg-white p-5 border border-slate-200 rounded-2xl shadow-sm hover:shadow-md hover:border-slate-300 transition-all flex flex-col justify-between space-y-4 relative"
+                >
+                  <form action={deleteDeck}>
+                    <input type="hidden" name="id" value={deck.id} />
+                    <button
+                      type="submit"
+                      className="absolute top-3 right-3 text-slate-400 hover:text-red-600 transition-colors px-2 py-1 text-sm font-bold"
+                      title="Delete deck"
+                    >
+                      ✕
+                    </button>
+                  </form>
+                  <h3 className="font-semibold text-slate-900 text-lg line-clamp-2 pr-6">{deck.title}</h3>
+                  <p className="text-xs text-slate-400">Created: {new Date(deck.createdAt).toLocaleDateString()}</p>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
 
       </div>
     </main>
-  );
+  )
 }

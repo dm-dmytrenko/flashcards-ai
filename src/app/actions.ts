@@ -1,27 +1,28 @@
-"use server";
+"use server"
 
 import { db } from "@/lib/db";
-import { revalidatePath } from "next/cache";
+import { revalidatePath } from 'next/cache'
 
 export async function getDecks() {
-    return await db.deck.findMany({
-        include: {
-            _count: {
-                select: { cards: true },
-            },
-        },
-        orderBy: { createdAt: "desc" },
-    });
+    const decks = await db.deck.findMany()
+    return decks;
 }
 
-export async function createDeck(formData: FormData) {
-    const title = formData.get("title") as string;
+export async function deleteDeck(formData: FormData) {
+    const id = formData.get("id") as string;
+    await db.deck.delete({
+        where: {
+            id: id
+        }
+    })
+    revalidatePath('/')
+}
 
-    if (!title || title.trim() === "") return;
-
-    await db.deck.create({
-        data: { title: title.trim() },
-    });
-
-    revalidatePath("/");
+export async function generateDeckFromPrompt(formData: FormData) {
+    const deck = await db.deck.create({
+        data: {
+            title: formData.get("title")
+        }
+    })
+    revalidatePath("/")
 }
