@@ -1,0 +1,34 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Deck {
+  id        String      @id @default(cuid())
+  title     String
+  cards     Flashcard[]
+  createdAt DateTime    @default(now())
+}
+
+model Flashcard {
+  id     String @id @default(cuid())
+  deckId String
+  deck   Deck   @relation(fields: [deckId], references: [id], onDelete: Cascade)
+  front  String
+  back   String
+
+  due           DateTime @default(now())
+  stability     Float    @default(0.0)
+  difficulty    Float    @default(0.0)
+  elapsedDays   Int      @default(0)
+  scheduledDays Int      @default(0)
+  reps          Int      @default(0)
+  lapses        Int      @default(0)
+  state         Int      @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
