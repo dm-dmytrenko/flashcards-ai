@@ -11,6 +11,18 @@ export async function getDecks() {
     return decks;
 }
 
+export async function getDeckById(id: string) {
+    const deck = await db.deck.findUnique({
+        where: {
+            id: id
+        },
+        include: {
+            cards: true
+        }
+    })
+    return deck;
+}
+
 export async function deleteDeck(formData: FormData) {
     const id = formData.get("id") as string;
     await db.deck.delete({

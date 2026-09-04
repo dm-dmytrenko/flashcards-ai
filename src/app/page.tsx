@@ -1,4 +1,5 @@
 import { getDecks, generateDeckFromPrompt, deleteDeck } from "./actions"
+import Link from "next/link"
 import Form from 'next/form'
 
 export default async function HomePage() {
@@ -52,7 +53,9 @@ export default async function HomePage() {
                       ✕
                     </button>
                   </form>
-                  <h3 className="font-semibold text-slate-900 text-lg line-clamp-2 pr-6">{deck.title}</h3>
+                  <Link href={`/deck/${deck.id}`} className="font-semibold text-slate-900 truncate hover:underline">
+                    <h3>{deck.title}</h3>
+                  </Link>
                   <p className="text-xs text-slate-400">Created: {new Date(deck.createdAt).toLocaleDateString()}</p>
                 </div>
               ))}
