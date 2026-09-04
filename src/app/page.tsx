@@ -36,7 +36,7 @@ export default async function HomePage() {
           {decks.length === 0 ? (
             <p className="text-slate-500 text-center py-8">No decks yet. Type a topic above to create your first one!</p>
           ) : (
-            <DeckList decks={decks} deleteAction={deleteDeck} />
+            <DeckList initialDecks={decks} deleteAction={deleteDeck} />
           )}
         </div>
       </div>

@@ -1,9 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import ModalDeck from "@/app/ModalDeck";
-import SubModalCard from "@/app/SubModalCard";
 
 interface Card {
     id: string;
@@ -18,9 +17,15 @@ interface Deck {
     cards: Card[];
 }
 
-export default function DeckList({ decks, deleteAction }: { decks: Deck[]; deleteAction: (formData: FormData) => void }) {
-    const [activeModalDeck, setActiveModalDeck] = useState<Deck | null>(null);
-    const [activeModalCard, setActiveModalCard] = useState<Deck | null>(null);
+export default function DeckList({ initialDecks = [], deleteAction }: { initialDecks?: Deck[]; deleteAction: (formData: FormData) => void }) {
+    const [decks, setDecks] = useState<Deck[]>(initialDecks);
+    const [activeModalDeckId, setActiveModalDeckId] = useState<string | null>(null);
+
+    useEffect(() => {
+        setDecks(initialDecks);
+    }, [initialDecks]);
+
+    const activeModalDeck = decks.find((d) => d.id === activeModalDeckId) || null;
 
     return (
         <div className="space-y-3 sm:grid-cols-2 md:grid-cols-3 gap-4">
@@ -36,7 +41,7 @@ export default function DeckList({ decks, deleteAction }: { decks: Deck[]; delet
 
                     <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                         <button
-                            onClick={() => setActiveModalDeck(deck)}
+                            onClick={() => setActiveModalDeckId(deck.id)} // 3. Set the ID here
                             className="text-xs font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-lg transition-colors cursor-pointer"
                         >
                             Manage
@@ -61,7 +66,7 @@ export default function DeckList({ decks, deleteAction }: { decks: Deck[]; delet
                     deckTitle={activeModalDeck.title}
                     cards={activeModalDeck.cards}
                     isOpen={!!activeModalDeck}
-                    onClose={() => setActiveModalDeck(null)}
+                    onClose={() => setActiveModalDeckId(null)}
                 />
             )}
         </div>

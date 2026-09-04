@@ -85,4 +85,5 @@ export async function updateCard(id: string, front: string, back: string) {
     } catch (err) {
         throw new Error("Failed to update the card")
     }
+    revalidatePath("/");
 }
