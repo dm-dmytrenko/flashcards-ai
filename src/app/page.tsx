@@ -1,6 +1,6 @@
 import { getDecks, generateDeckFromPrompt, deleteDeck } from "./actions"
-import Link from "next/link"
 import Form from 'next/form'
+import DeckList from "@/components/ui/DeckList"
 
 export default async function HomePage() {
   const decks = await getDecks()
@@ -36,33 +36,9 @@ export default async function HomePage() {
           {decks.length === 0 ? (
             <p className="text-slate-500 text-center py-8">No decks yet. Type a topic above to create your first one!</p>
           ) : (
-            <div className="space-y-3 sm:grid-cols-2 md:grid-cols-3 gap-4">
-
-              {decks.map((deck) => (
-                <div
-                  key={deck.id}
-                  className="bg-white p-5 border border-slate-200 rounded-2xl shadow-sm hover:shadow-md hover:border-slate-300 transition-all flex flex-col justify-between space-y-4 relative"
-                >
-                  <form action={deleteDeck}>
-                    <input type="hidden" name="id" value={deck.id} />
-                    <button
-                      type="submit"
-                      className="absolute top-3 right-3 text-slate-400 hover:text-red-600 transition-colors px-2 py-1 text-sm font-bold"
-                      title="Delete deck"
-                    >
-                      ✕
-                    </button>
-                  </form>
-                  <Link href={`/deck/${deck.id}`} className="font-semibold text-slate-900 truncate hover:underline">
-                    <h3>{deck.title}</h3>
-                  </Link>
-                  <p className="text-xs text-slate-400">Created: {new Date(deck.createdAt).toLocaleDateString()}</p>
-                </div>
-              ))}
-            </div>
+            <DeckList decks={decks} deleteAction={deleteDeck} />
           )}
         </div>
-
       </div>
     </main>
   )
