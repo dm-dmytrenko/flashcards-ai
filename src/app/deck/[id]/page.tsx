@@ -12,5 +12,10 @@ export default async function StudyDeckPage({ params }: PageProps) {
 
     const deck = await getDeckById(id);
 
-    return <StudyCard cards={deck.cards} />
+    return (
+        <div className="min-h-screen flex items-center justify-center">
+            <StudyCard cards={deck.cards} />
+        </div>
+    )
+
 }
