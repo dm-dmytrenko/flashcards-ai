@@ -72,3 +72,17 @@ export async function generateDeckFromPrompt(formData: FormData) {
     })
     revalidatePath("/")
 }
+
+export async function updateCard(id: string, front: string, back: string) {
+    try {
+        await db.flashcard.update({
+            where: { id: id },
+            data: {
+                front: front,
+                back: back,
+            }
+        })
+    } catch (err) {
+        throw new Error("Failed to update the card")
+    }
+}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { updateCard } from "./actions";
 
 interface ModalProps {
     cardFront: string,
@@ -8,10 +9,18 @@ interface ModalProps {
     onClose: () => void;
 }
 
-export default function SubModalCard({ cardFront, cardBack, onClose }: ModalProps) {
-
+export default function SubModalCard({ cardId, cardFront, cardBack, onClose }: ModalProps) {
     const [newCardFront, setNewCardFront] = useState(cardFront);
     const [newCardBack, setNewCardBack] = useState(cardBack);
+
+    const handleUpdate = async () => {
+        try {
+            await updateCard(cardId, newCardFront, newCardBack);
+            onClose();
+        } catch (error) {
+            console.error(error);
+        };
+    }
 
     return (
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
@@ -44,7 +53,7 @@ export default function SubModalCard({ cardFront, cardBack, onClose }: ModalProp
                     />
                 </div>
                 <button
-                    onClick={onClose}
+                    onClick={handleUpdate}
                     className="text-xs font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-lg transition-colors cursor-pointer"
                 >
                     Update

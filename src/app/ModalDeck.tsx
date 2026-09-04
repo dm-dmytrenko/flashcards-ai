@@ -95,6 +95,7 @@ export default function Modal({ deckId, deckTitle, cards = [], isOpen, onClose }
                 <div>
                     {selectedCard !== null ? (
                         <SubModalCard
+                            cardId={selectedCard.id}
                             cardFront={selectedCard.front}
                             cardBack={selectedCard.back}
                             onClose={() => setSelectedCard(null)}
