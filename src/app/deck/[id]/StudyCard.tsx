@@ -13,31 +13,35 @@ interface StudyCardsProp {
 }
 
 export default function StudyCard({ cards }: StudyCardsProp) {
-    const [currentIndex, setCurrentIndex] = useState(0);
+    const [queue, setQueue] = useState(cards);
     const [isFlipped, setIsFlipped] = useState(false);
     const [isFinished, setIsFinished] = useState(false);
 
-    const cardsNumber = cards.length;
+    const currentCard = queue[0];
+    const totalCards = cards.length;
+    const remainingTotalCards = totalCards - queue.length;
 
-    const currentCard = cards[currentIndex];
-
-    const handleNext = () => {
+    const handleCorrect = () => {
         setIsFlipped(false);
-        if (currentIndex < cardsNumber - 1) {
-            setCurrentIndex((prevIndex) => prevIndex + 1);
-        } else {
+
+        const nextQueue = queue.slice(1);
+        setQueue(nextQueue);
+
+        if (nextQueue.length === 0) {
             setIsFinished(true);
         }
     };
-    const handlePrev = () => {
+
+    const handleWrong = () => {
         setIsFlipped(false);
-        setCurrentIndex((prevIndex) => Math.max(0, prevIndex - 1));
+        const nextQueue = [...queue.slice(1), queue[0]];
+        setQueue(nextQueue);
     };
 
-    if (cardsNumber === 0) {
+    if (queue.length === 0) {
         return (
             <div className="bg-white p-8 rounded-2xl border border-slate-200 text-center text-slate-500">
-                No flashcards found in this deck.
+                Good job, you've finished everything!
             </div>
         )
     }
@@ -50,7 +54,7 @@ export default function StudyCard({ cards }: StudyCardsProp) {
             >
                 <div className="flex justify-between items-center w-full">
                     <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
-                        Card {currentIndex + 1} of {cardsNumber}
+                        Completed {remainingTotalCards} cards out of {totalCards}
                     </span>
                     <span className="text-xs uppercase tracking-wider text-slate-400 font-semibold">
                         {isFlipped ? "Answer" : "Question"}
@@ -68,16 +72,16 @@ export default function StudyCard({ cards }: StudyCardsProp) {
 
                 <div className="flex gap-4 justify-center w-full" onClick={(e) => e.stopPropagation()}>
                     <button
-                        onClick={handlePrev}
+                        onClick={handleWrong}
                         className="flex-1 px-5 py-4 bg-white border border-slate-200 text-slate-700 rounded-xl font-medium hover:bg-slate-50 transition-colors cursor-pointer"
                     >
-                        Previous
+                        Wrong
                     </button>
                     <button
-                        onClick={handleNext}
+                        onClick={handleCorrect}
                         className="flex-1 px-5 py-4 bg-slate-900 text-white rounded-xl font-medium hover:bg-slate-800 transition-colors cursor-pointer"
                     >
-                        Next
+                        Correct
                     </button>
                 </div>
             </div>
