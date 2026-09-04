@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import Modal from "@/app/Modal";
+import ModalDeck from "@/app/ModalDeck";
+import SubModalCard from "@/app/SubModalCard";
 
 interface Card {
     id: string;
@@ -19,6 +20,7 @@ interface Deck {
 
 export default function DeckList({ decks, deleteAction }: { decks: Deck[]; deleteAction: (formData: FormData) => void }) {
     const [activeModalDeck, setActiveModalDeck] = useState<Deck | null>(null);
+    const [activeModalCard, setActiveModalCard] = useState<Deck | null>(null);
 
     return (
         <div className="space-y-3 sm:grid-cols-2 md:grid-cols-3 gap-4">
@@ -54,7 +56,7 @@ export default function DeckList({ decks, deleteAction }: { decks: Deck[]; delet
             ))}
 
             {activeModalDeck && (
-                <Modal
+                <ModalDeck
                     deckId={activeModalDeck.id}
                     deckTitle={activeModalDeck.title}
                     cards={activeModalDeck.cards}

@@ -7,8 +7,10 @@ import Groq from "groq-sdk";
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
 export async function getDecks() {
-    const decks = await db.deck.findMany()
-    return decks;
+    return await db.deck.findMany({
+        include: { cards: true },
+        orderBy: { createdAt: "desc" }
+    });
 }
 
 export async function getDeckById(id: string) {
