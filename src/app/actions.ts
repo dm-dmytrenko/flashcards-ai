@@ -17,7 +17,7 @@ export async function getDeckById(id: string) {
             id: id
         },
         include: {
-            cards: true
+            cards: true,
         }
     })
     return deck;

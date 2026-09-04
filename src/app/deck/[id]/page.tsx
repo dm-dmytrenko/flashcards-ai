@@ -1,4 +1,5 @@
 import { getDeckById, getDecks } from "@/app/actions"
+import StudyCard from "./StudyCard";
 
 interface PageProps {
     params: Promise<{
@@ -11,5 +12,5 @@ export default async function StudyDeckPage({ params }: PageProps) {
 
     const deck = await getDeckById(id);
 
-    return <div>Study deck</div>
+    return <StudyCard cards={deck.cards} />
 }
