@@ -38,10 +38,26 @@ export default function StudyCard({ cards }: StudyCardsProp) {
         setQueue(nextQueue);
     };
 
-    if (queue.length === 0) {
+    if (queue.length === 0 || isFinished) {
         return (
-            <div className="bg-white p-8 rounded-2xl border border-slate-200 text-center text-slate-500">
-                Good job, you've finished everything!
+            <div className="w-full max-w-md bg-white p-8 rounded-3xl border border-slate-200 shadow-sm text-center space-y-6">
+                <div className="w-16 h-16 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center mx-auto text-2xl font-bold">
+                    🎉
+                </div>
+                <div>
+                    <h2 className="text-xl font-bold text-slate-900">Session Complete!</h2>
+                    <p className="text-sm text-slate-500 mt-1">You successfully reviewed and cleared all your cards.</p>
+                </div>
+
+                <button
+                    onClick={() => {
+                        setQueue(cards);
+                        setIsFinished(false);
+                    }}
+                    className="w-full py-3 px-4 bg-slate-900 hover:bg-slate-800 text-white font-medium rounded-xl transition-colors cursor-pointer"
+                >
+                    Study Again
+                </button>
             </div>
         )
     }
