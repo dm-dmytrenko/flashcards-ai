@@ -6,10 +6,21 @@ datasource db {
   provider = "postgresql"
 }
 
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  decks     Deck[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 model Deck {
   id        String      @id @default(cuid())
   title     String
   cards     Flashcard[]
+  user      User?       @relation(fields: [userId], references: [id])
+  userId    String?
   createdAt DateTime    @default(now())
 }
 

@@ -1,7 +1,8 @@
 "use server"
 
 import { db } from "@/lib/db";
-import { revalidatePath } from 'next/cache'
+import { hashPassword } from "@/lib/utils";
+import { redirect } from "next/navigation";
 import Groq from "groq-sdk";
 
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
@@ -86,4 +87,32 @@ export async function updateCard(id: string, front: string, back: string) {
         throw new Error("Failed to update the card")
     }
     revalidatePath("/");
+}
+
+export async function registerUser(formData: FormData) {
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
+
+    if (!email || !password) {
+        return { error: "Email and password are required." };
+    }
+
+    const existingUser = await db.user.findUnique({
+        where: { email }
+    })
+
+    if (existingUser) {
+        return { error: "An account with this email already exists." };
+    }
+
+    const hashedPassword = hashPassword(password);
+
+    await db.user.create({
+        data: {
+            email: email,
+            password: hashedPassword
+        }
+    })
+
+    redirect("/login");
 }
