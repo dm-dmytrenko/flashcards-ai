@@ -4,7 +4,7 @@ import { db } from "@/lib/db";
 import Credentials from "next-auth/providers/credentials";
 import { verifyPassword } from "@/lib/utils";
 
-export const { auth, signIn, signOut } = NextAuth({
+export const { handlers, auth, signIn, signOut } = NextAuth({
     adapter: PrismaAdapter(db),
     session: { strategy: "jwt" },
     providers: [
