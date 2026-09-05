@@ -7,7 +7,7 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export async function hashPassword(password: string) {
-  return await bycript.hash(password, 10);
+  return await bycrypt.hash(password, 10);
 }
 
 export async function verifyPassword(password: string, hashed: string) {

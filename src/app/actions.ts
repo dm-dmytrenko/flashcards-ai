@@ -3,6 +3,7 @@
 import { db } from "@/lib/db";
 import { hashPassword } from "@/lib/utils";
 import { redirect } from "next/navigation";
+import bcrypt from "bcrypt";
 import Groq from "groq-sdk";
 
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
@@ -93,6 +94,9 @@ export async function registerUser(formData: FormData) {
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
 
+    console.log(email);
+    console.log(password);
+
     if (!email || !password) {
         return { error: "Email and password are required." };
     }
@@ -105,7 +109,7 @@ export async function registerUser(formData: FormData) {
         return { error: "An account with this email already exists." };
     }
 
-    const hashedPassword = hashPassword(password);
+    const hashedPassword = await hashPassword(password);
 
     await db.user.create({
         data: {
@@ -114,5 +118,5 @@ export async function registerUser(formData: FormData) {
         }
     })
 
-    redirect("/login");
+    //redirect("/login");
 }
