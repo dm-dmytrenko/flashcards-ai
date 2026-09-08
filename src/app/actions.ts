@@ -11,11 +11,14 @@ const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
 export async function getDecks() {
     const session = await auth();
-    return await db.deck.findMany({
-        where: { userId: session.user.id },
-        include: { cards: true },
-        orderBy: { createdAt: "desc" }
-    });
+
+    if (session) {
+        return await db.deck.findMany({
+            where: { userId: session.user.id },
+            include: { cards: true },
+            orderBy: { createdAt: "desc" }
+        });
+    } else redirect("/login")
 }
 
 export async function getDeckById(id: string) {
@@ -44,7 +47,7 @@ export async function generateDeckFromPrompt(formData: FormData) {
     const session = await auth();
 
     if (!session?.user?.id) {
-        throw new Error("Unauthorized");
+        redirect('/login');
     }
 
     const prompt = formData.get("title") as string;
