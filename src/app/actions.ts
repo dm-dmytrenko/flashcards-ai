@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { auth } from "./auth";
 import { hashPassword } from "@/lib/utils";
 import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
 import bcrypt from "bcrypt";
 import Groq from "groq-sdk";
 
@@ -85,6 +86,7 @@ export async function generateDeckFromPrompt(formData: FormData) {
             }
         }
     });
+    revalidatePath("/");
 }
 
 export async function updateCard(id: string, front: string, back: string) {
