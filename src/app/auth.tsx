@@ -15,20 +15,31 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                 password: { label: "Password", type: "password" }
             },
             async authorize(credentials) {
-                if (!credentials?.email || !credentials?.password) return null;
-
+                if (!credentials?.email || !credentials?.password) {
+                    console.log("Authorize error: Missing credentials");
+                    return null;
+                }
                 const user = await db.user.findUnique({
                     where: { email: credentials.email as string }
-                })
+                });
 
-                if (!user || !user.password) return null;
+                if (!user) {
+                    console.log("Authorize error: User not found in database");
+                    return null;
+                }
 
+                if (!user.password) {
+                    console.log("Authorize error: User has no password set");
+                    return null;
+                }
                 const isValid = await verifyPassword(
                     credentials.password as string, user.password
-                )
+                );
 
-                if (!isValid) return null;
-
+                if (!isValid) {
+                    console.log("Authorize error: Password does not match");
+                    return null;
+                }
                 return user;
             }
         })

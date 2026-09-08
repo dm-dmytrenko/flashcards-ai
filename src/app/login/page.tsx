@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { registerUser } from "../actions";
+import { signIn } from "next-auth/react";
 
 export default function RegisterPage() {
     const [error, setError] = useState<string | null>(null);
@@ -16,12 +16,15 @@ export default function RegisterPage() {
         const password = formData.get("password");
 
         try {
-            const result = await registerUser(formData);
-
+            const result = await signIn("credentials", {
+                email,
+                password,
+                redirect: false,
+            });
             if (result?.error) {
                 setError(result.error);
             } else {
-                console.log("User is created successfully")
+                window.location.href = "/";
             }
         } catch (err: any) {
             if (err.message === "NEXT_REDIRECT" || err.digest?.includes("NEXT_REDIRECT")) {
@@ -36,8 +39,7 @@ export default function RegisterPage() {
     return (
         <div className="min-h-screen flex items-center justify-center bg-slate-50 p-4">
             <div className="bg-white w-full max-w-md rounded-3xl p-8 shadow-xl border border-slate-200">
-                <h1 className="text-2xl font-bold text-slate-900 mb-2">Create an Account</h1>
-                <p className="text-sm text-slate-500 mb-6">Start managing your flashcard decks today.</p>
+                <h1 className="text-2xl font-bold text-slate-900 mb-2">Login</h1>
 
                 {error && (
                     <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-600 text-sm rounded-xl">
@@ -69,16 +71,9 @@ export default function RegisterPage() {
                         disabled={loading}
                         className="w-full text-sm font-medium text-white bg-slate-900 hover:bg-slate-800 py-3 rounded-xl transition-colors cursor-pointer disabled:opacity-50 mt-2"
                     >
-                        {loading ? "Creating account..." : "Register"}
+                        {loading ? "Entering account..." : "Login"}
                     </button>
                 </form>
-
-                <p className="text-center text-sm text-slate-500 mt-6">
-                    Already have an account?{" "}
-                    <Link href="/login" className="font-semibold text-slate-900 hover:underline">
-                        Log in
-                    </Link>
-                </p>
             </div>
         </div>
     );

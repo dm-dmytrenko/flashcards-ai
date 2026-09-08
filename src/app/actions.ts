@@ -94,9 +94,6 @@ export async function registerUser(formData: FormData) {
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
 
-    console.log(email);
-    console.log(password);
-
     if (!email || !password) {
         return { error: "Email and password are required." };
     }
@@ -118,5 +115,5 @@ export async function registerUser(formData: FormData) {
         }
     })
 
-    //redirect("/login");
+    redirect("/login");
 }
