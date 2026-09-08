@@ -1,6 +1,7 @@
 "use server"
 
 import { db } from "@/lib/db";
+import { auth } from "./auth";
 import { hashPassword } from "@/lib/utils";
 import { redirect } from "next/navigation";
 import bcrypt from "bcrypt";
@@ -9,7 +10,9 @@ import Groq from "groq-sdk";
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
 export async function getDecks() {
+    const session = await auth();
     return await db.deck.findMany({
+        where: { userId: session.user.id },
         include: { cards: true },
         orderBy: { createdAt: "desc" }
     });
@@ -38,14 +41,20 @@ export async function deleteDeck(formData: FormData) {
 }
 
 export async function generateDeckFromPrompt(formData: FormData) {
+    const session = await auth();
+
+    if (!session?.user?.id) {
+        throw new Error("Unauthorized");
+    }
+
     const prompt = formData.get("title") as string;
     if (!prompt) return;
 
-    const complition = await groq.chat.completions.create({
+    const completion = await groq.chat.completions.create({
         messages: [
             {
                 role: "system",
-                content: "You are an expert flashcard creator. Given a topic, generate a JSON object with a catchy deck 'title' and an array of 'cards' (each with 'front' and 'back' properties). Each cards has only one word on 'front' and one word on 'back'. Return ONLY valid JSON, with no extra text or markdown formatting blocks."
+                content: "You are an expert flashcard creator. Given a topic, generate a JSON object with a catchy deck 'title' and an array of 'cards' (each with 'front' and 'back' properties). Each card has only one word on 'front' and one word on 'back'. Return ONLY valid JSON, with no extra text or markdown formatting blocks."
             },
             {
                 role: "user",
@@ -54,16 +63,17 @@ export async function generateDeckFromPrompt(formData: FormData) {
         ],
         model: "openai/gpt-oss-20b",
         response_format: { type: "json_object" }
-    })
+    });
 
-    const responseContent = complition.choices[0]?.message?.content;
+    const responseContent = completion.choices[0]?.message?.content;
     if (!responseContent) return;
 
     const data = JSON.parse(responseContent);
 
-    const deck = await db.deck.create({
+    await db.deck.create({
         data: {
             title: data.title || prompt,
+            userId: session.user.id,
             cards: {
                 create: data.cards.map((card: { front: string; back: string }) => ({
                     front: card.front,
@@ -71,8 +81,7 @@ export async function generateDeckFromPrompt(formData: FormData) {
                 }))
             }
         }
-    })
-    //revalidatePath("/")
+    });
 }
 
 export async function updateCard(id: string, front: string, back: string) {
