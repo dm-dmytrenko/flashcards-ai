@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import ModalDeck from "@/app/ModalDeck";
+import ModalDeck from "../modals/ModalDeck";
 
 interface Card {
     id: string;

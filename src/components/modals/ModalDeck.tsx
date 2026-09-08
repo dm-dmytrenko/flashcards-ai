@@ -17,7 +17,7 @@ interface ModalProps {
     onClose: () => void;
 }
 
-export default function Modal({ deckId, deckTitle, cards = [], isOpen, onClose }: ModalProps) {
+export default function ModalDeck({ deckId, deckTitle, cards = [], isOpen, onClose }: ModalProps) {
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedCard, setSelectedCard] = useState<Card | null>(null);
     const [title, setTitle] = useState(deckTitle);

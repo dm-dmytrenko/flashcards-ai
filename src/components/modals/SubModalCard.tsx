@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { updateCard } from "./actions";
+import { updateCard } from "@/app/actions";
 
 interface ModalProps {
     cardFront: string,

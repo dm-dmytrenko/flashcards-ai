@@ -1,5 +1,5 @@
 import { getDeckById } from "@/app/actions";
-import StudyCard from "./StudyCard";
+import StudyCard from "../../../components/ui/StudyCard";
 import Link from "next/link";
 
 export default async function StudyDeckPage({ params }: { params: Promise<{ id: string }> }) {
