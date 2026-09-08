@@ -1,4 +1,5 @@
 import { getDecks, generateDeckFromPrompt, deleteDeck } from "./actions"
+import LogoutButton from "@/components/ui/LogOutButton"
 import Form from 'next/form'
 import DeckList from "@/components/ui/DeckList"
 
@@ -8,6 +9,8 @@ export default async function HomePage() {
   return (
     <main className="min-h-screen bg-slate-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto space-y-10">
+        <LogoutButton />
+
         <div className="text-center space-y-2">
           <h1 className="text-4xl font-extrabold tracking-tight text-slate-900">Flashcards AI</h1>
           <p className="text-slate-600">Transform any topic into a smart study deck using AI.</p>
