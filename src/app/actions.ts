@@ -45,7 +45,7 @@ export async function generateDeckFromPrompt(formData: FormData) {
         messages: [
             {
                 role: "system",
-                content: "You are an expert flashcard creator. Given a topic, generate a JSON object with a catchy deck 'title' and an array of 'cards' (each with 'front' and 'back' properties). Generate about 5-8 high-yield cards. Return ONLY valid JSON, with no extra text or markdown formatting blocks."
+                content: "You are an expert flashcard creator. Given a topic, generate a JSON object with a catchy deck 'title' and an array of 'cards' (each with 'front' and 'back' properties). Each cards has only one word on 'front' and one word on 'back'. Return ONLY valid JSON, with no extra text or markdown formatting blocks."
             },
             {
                 role: "user",
@@ -72,7 +72,7 @@ export async function generateDeckFromPrompt(formData: FormData) {
             }
         }
     })
-    revalidatePath("/")
+    //revalidatePath("/")
 }
 
 export async function updateCard(id: string, front: string, back: string) {
