@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import ModalDeck from "../modals/ModalDeck";
 
 interface Card {
@@ -20,6 +20,7 @@ interface Deck {
 export default function DeckList({ initialDecks = [], deleteAction }: { initialDecks?: Deck[]; deleteAction: (formData: FormData) => void }) {
     const [decks, setDecks] = useState<Deck[]>(initialDecks);
     const [activeModalDeckId, setActiveModalDeckId] = useState<string | null>(null);
+    const router = useRouter();
 
     useEffect(() => {
         setDecks(initialDecks);
@@ -32,25 +33,36 @@ export default function DeckList({ initialDecks = [], deleteAction }: { initialD
             {decks.map((deck) => (
                 <div
                     key={deck.id}
-                    className="bg-white p-5 border border-slate-200 rounded-2xl shadow-sm hover:shadow-md transition-all flex items-center justify-between relative group"
+                    onClick={() => router.push(`/deck/${deck.id}`)}
+                    className="bg-white p-5 border border-slate-200 rounded-2xl shadow-sm hover:shadow-md transition-all flex items-center justify-between relative group cursor-pointer"
                 >
-                    <Link href={`/deck/${deck.id}`} className="space-y-1 block truncate pr-4">
-                        <h3 className="font-semibold text-slate-900 hover:underline truncate">{deck.title}</h3>
+                    <div className="space-y-1 truncate pr-4">
+                        <h3 className="font-semibold text-slate-900 group-hover:underline truncate">{deck.title}</h3>
                         <p className="text-xs text-slate-400">Created: {new Date(deck.createdAt).toLocaleDateString()}</p>
-                    </Link>
+                    </div>
 
-                    <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div
+                        className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
                         <button
-                            onClick={() => setActiveModalDeckId(deck.id)} // 3. Set the ID here
+                            type="button"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setActiveModalDeckId(deck.id);
+                            }}
                             className="text-xs font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-lg transition-colors cursor-pointer"
                         >
                             Manage
                         </button>
 
-                        <form action={deleteAction}>
+                        <form
+                            action={deleteAction}
+                            onClick={(e) => e.stopPropagation()}
+                        >
                             <input type="hidden" name="id" value={deck.id} />
                             <button
                                 type="submit"
+                                onClick={(e) => e.stopPropagation()}
                                 className="text-xs font-medium text-red-600 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-lg transition-colors cursor-pointer"
                             >
                                 Delete
