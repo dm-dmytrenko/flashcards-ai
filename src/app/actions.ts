@@ -5,7 +5,7 @@ import { auth } from "./auth";
 import { hashPassword } from "@/lib/utils";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import Groq from "groq-sdk";
 
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
@@ -15,7 +15,7 @@ export async function getDecks() {
 
     if (session) {
         return await db.deck.findMany({
-            where: { userId: session.user.id },
+            where: { userId: session?.user?.id },
             include: { cards: true },
             orderBy: { createdAt: "desc" }
         });
