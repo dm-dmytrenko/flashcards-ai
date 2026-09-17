@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { registerUser } from "../actions";
+import { registerUser } from "@/app/actions";
 
 export default function RegisterPage() {
     const [error, setError] = useState<string | null>(null);
